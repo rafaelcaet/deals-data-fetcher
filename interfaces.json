@@ -1,0 +1,19 @@
+{   
+    "data" : {
+        "api_url" : "https://grupoprominas68189.api-us1.com/api/3/dealCustomFieldData",
+        "headers":{
+            "accept":"application/json",
+            "Api-Token":"90d0e8a9d8a6cd0a06a6f7ab55a79b03df87aafaa6e6d1e5330bfaee2d50719203ec7da2"
+        }
+    },
+    
+    "meta" : {
+        "api_url" : "https://grupoprominas68189.api-us1.com/api/3/dealCustomFieldMeta",
+        "headers":{
+            "accept":"application/json",
+            "Api-Token":"90d0e8a9d8a6cd0a06a6f7ab55a79b03df87aafaa6e6d1e5330bfaee2d50719203ec7da2"
+        }
+    }
+    
+}
+    
