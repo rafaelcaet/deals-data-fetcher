@@ -4,6 +4,13 @@
         "headers":{
             "accept":"application/json",
             "Api-Token":"90d0e8a9d8a6cd0a06a6f7ab55a79b03df87aafaa6e6d1e5330bfaee2d50719203ec7da2"
+        },
+        "schema":{
+            "fieldValue": "str",
+            "customFieldId": "str",
+            "dealId":"str",
+            "id":"str",
+            "dealCustomFieldMetumId":"str"
         }
     },
     
@@ -12,7 +19,8 @@
         "headers":{
             "accept":"application/json",
             "Api-Token":"90d0e8a9d8a6cd0a06a6f7ab55a79b03df87aafaa6e6d1e5330bfaee2d50719203ec7da2"
-        }
+        },
+        "schema":{}
     }
     
 }
