@@ -1,5 +1,8 @@
 *.xlsx
 *.csv
-interfaces.json
+config.json
 *.json
 /*.json
+__pycache__
+.vscode
+others
