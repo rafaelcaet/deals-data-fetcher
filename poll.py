@@ -27,24 +27,20 @@ class Poll:
         for deal in deal_instances:
             thread = threading.Thread(target=deal.fetch_and_process_data)
             threads.append(thread)
-
-        """
-        ################## CONTACTS THREADS #################################
-        """
-        for endpoint in config["contacts"]:
-            contact_instance = Contacts(endpoint, config["contacts"])
-            contact_instances.append(contact_instance)
-
-        for contact in contact_instances:
-            thread = threading.Thread(target=contact.fetch_and_process_data)
-            threads.append(thread)
-
-        for thread in threads:
-            print(thread)
             thread.start()
 
         for thread in threads:
             thread.join()
-            print(thread)
+
+        # """
+        # ################## CONTACTS THREADS #################################
+        # """
+        # for endpoint in config["contacts"]:
+        #     contact_instance = Contacts(endpoint, config["contacts"])
+        #     contact_instances.append(contact_instance)
+
+        # for contact in contact_instances:
+        #     thread = threading.Thread(target=contact.fetch_and_process_data)
+        #     threads.append(thread)
 
         print("\n\n\nAll threads have been processed.")

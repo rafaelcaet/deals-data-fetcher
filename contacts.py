@@ -39,9 +39,9 @@ class Contacts:
 
         try:
             while True:
-                # print(
-                #     f"> (({self.config_type})) fetching data with offset {current_offset} \n"
-                # )
+                print(
+                    f"> (({self.config_type})) fetching data with offset {current_offset} \n"
+                )
                 response = requests.get(
                     self.config[self.config_type]["api_url"] + date_filter,
                     headers=self.config[self.config_type]["headers"],
@@ -79,7 +79,7 @@ class Contacts:
 
                 df_list.append(df)
 
-                if current_offset >= 2000 or limit == 0:
+                if current_offset >= 500 or limit == 0:
                     break
                 else:
                     current_offset += limit
@@ -103,6 +103,8 @@ class Contacts:
         except Exception as e:
             print(f"Unexpected error for {self.config_type}: {e}")
 
+    def fetch_values(self):
+        pass
         # try:
         #         # type casting to string
         #         dfMeta['id'] = dfMeta['id'].astype(str)

@@ -34,14 +34,15 @@ class Deals:
         time.sleep(1)
 
         df_list = []
+        df_list_data = []
         current_offset = 0
         limit = int(self.config[self.config_type]["params"]["limit"])
 
         try:
             while True:
-                # print(
-                #     f"\n> (({self.config_type})) fetching data with offset {current_offset} \n"
-                # )
+                print(
+                    f"\n> (({self.config_type})) fetching data with offset {current_offset} \n"
+                )
                 response = requests.get(
                     self.config[self.config_type]["api_url"] + date_filter,
                     headers=self.config[self.config_type]["headers"],
@@ -70,7 +71,6 @@ class Deals:
 
                 # Normalizing response data
                 normalized_response_data = pd.json_normalize(response_data[key])
-
                 if len(self.config[self.config_type]["schema"]) != 0:
                     df = pd.DataFrame(
                         normalized_response_data,
@@ -78,10 +78,9 @@ class Deals:
                     )
                 else:
                     df = pd.DataFrame(normalized_response_data)
-
                 df_list.append(df)
 
-                if current_offset == 2000 or limit == 0:
+                if current_offset == 500 or limit == 0:
                     break
                 else:
                     current_offset += limit
@@ -97,6 +96,37 @@ class Deals:
                 # final_df.to_excel(key + ".xlsx", index=False, engine="openpyxl")
             else:
                 print("> No data was fetched from the API.\n")
+
+            if self.config_type == "deal":
+                for dealCustomFieldData in final_df["links.dealCustomFieldData"]:
+                    response = requests.get(
+                        dealCustomFieldData,
+                        headers=self.config[self.config_type]["headers"],
+                    )
+                    response_data = response.json()
+                    normalized_response_data = pd.json_normalize(
+                        response_data["dealCustomFieldData"]
+                    )
+                    df_list_data.append(normalized_response_data)
+                    # if len(self.config[self.config_type]["schema"]) != 0:
+                    #     df = pd.DataFrame(
+                    #         normalized_response_data,
+                    #         columns=self.config[self.config_type]["schema"].keys(),
+                    #     )
+                    # else:
+                if df_list_data:
+                    df_final_data = pd.concat(df_final_data, ignore_index=True)
+                    # print(
+                    #     f"> Final {self.config_type} dataframe created with {len(final_df)} rows!\n Exported dataframe to csv!"
+                    # )
+                    df_final_data.to_csv(
+                        "./others/dealCustomFieldData.csv",
+                        encoding="utf-8-sig",
+                        index=False,
+                    )
+                    # final_df.to_excel(key + ".xlsx", index=False, engine="openpyxl")
+                else:
+                    print("> No data was fetched from the API.\n")
 
         except requests.exceptions.RequestException as req_error:
             print(f"Request error for {self.config_type}: {req_error}")
