@@ -42,7 +42,7 @@ class Deals:
         limit = int(self.config[self.config_type]["params"]["limit"])
 
         try:
-            print(f">  Start a fetch to -> {self.config_type}\n")
+            print(f"> Started a fetch to -> {self.config_type}")
             while True:
 
                 # Request to the API

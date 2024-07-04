@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import threading
 from dealFetchData.deals import *
-from dealFetchData.dealContact import *
+from dealFetchData.dealOwner import *
 from dealFetchData.dealCustomFieldData import *
 
 
@@ -21,11 +21,10 @@ class Poll:
         ############## List and variables ################################
 
         threads = []
-        results = []
         lock = threading.Lock()
         deal_instances = []
         ################## Deals Threads #################################
-
+        print(f">> started a fetch thread to deals")
         for endpoint in config["deals"]:
             deal_instance = Deals(endpoint, config["deals"])
             deal_instances.append(deal_instance)
@@ -39,7 +38,8 @@ class Poll:
             thread.join()
 
         ################## DealCustomFieldData Threads ###################
-        print(f">  Start Threads to fetch dealCustomFieldData \n")
+        print(f">> started a fetch thread to dealCustomFieldData")
+        results = []
 
         df_deals = pd.read_csv("./others/deals.csv")
 
@@ -57,6 +57,26 @@ class Poll:
 
         final_df = pd.concat(results, ignore_index=True)
         final_df.to_csv("./others/dealCustomFieldData.csv",
+                        encoding="utf-8-sig",
+                        index=False)
+        final_df = None
+        ################## DealOwner Threads ###################
+        print(f">>  started a fetch thread to dealOnwer")
+        results = []
+
+        for deal_owner_link in df_deals['links.owner']:
+            thread = threading.Thread(target=fetch_deal_owner,
+                                      args=(deal_owner_link,
+                                            config["dealOwner"], results,
+                                            lock))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        final_df = pd.concat(results, ignore_index=True)
+        final_df.to_csv("./others/dealsOwner.csv",
                         encoding="utf-8-sig",
                         index=False)
 
