@@ -1,14 +1,7 @@
 import requests
 import pandas as pd
 from datetime import datetime
-import os
 import time
-import json
-
-
-# Cleaning the Screen
-def clearScreen():
-    os.system("clear")
 
 
 class Deals:
@@ -101,7 +94,7 @@ class Deals:
                                 index=False)
             else:
                 print("> No data was fetched from the API.\n")
-            print(f">  Finished -> {self.config_type}\n")
+            print(f"> Finished -> {self.config_type}")
         except requests.exceptions.RequestException as req_error:
             print(f"Request error for {self.config_type}: {req_error}")
         except ValueError as val_error:
