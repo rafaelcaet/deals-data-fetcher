@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import os
 import time
+import json
 
 
 # Cleaning the Screen
@@ -27,31 +28,36 @@ class Deals:
 
         # Get date
         date_now = datetime.now()
+
         # Format date
         formatted_date = date_now.strftime("%Y-%m-%d")
-        date_filter = "?filters[created_after]=" + formatted_date
+        date_filter = "?filters[updated_after]=" + formatted_date
 
         time.sleep(1)
 
+        # lists and variables
         df_list = []
         df_list_data = []
         current_offset = 0
         limit = int(self.config[self.config_type]["params"]["limit"])
 
         try:
+            print(f">  Start a fetch to -> {self.config_type}\n")
             while True:
-                print(
-                    f"\n> (({self.config_type})) fetching data with offset {current_offset} \n"
-                )
+
+                # Request to the API
                 response = requests.get(
                     self.config[self.config_type]["api_url"] + date_filter,
                     headers=self.config[self.config_type]["headers"],
                     params={
                         **self.config[self.config_type].get("params", {}),
-                        "offset": current_offset,
+                        "offset":
+                        current_offset,
                     },
                 )
+                # Http error handler
                 response.raise_for_status()
+
                 response_data = response.json()
 
                 # Set key variable
@@ -70,7 +76,8 @@ class Deals:
                     break
 
                 # Normalizing response data
-                normalized_response_data = pd.json_normalize(response_data[key])
+                normalized_response_data = pd.json_normalize(
+                    response_data[key])
                 if len(self.config[self.config_type]["schema"]) != 0:
                     df = pd.DataFrame(
                         normalized_response_data,
@@ -80,54 +87,21 @@ class Deals:
                     df = pd.DataFrame(normalized_response_data)
                 df_list.append(df)
 
+                # Break "while" if offset is more than 500
                 if current_offset == 500 or limit == 0:
                     break
                 else:
                     current_offset += limit
 
+            # Concat all data frames
             if df_list:
                 final_df = pd.concat(df_list, ignore_index=True)
-                # print(
-                #     f"> Final {self.config_type} dataframe created with {len(final_df)} rows!\n Exported dataframe to csv!"
-                # )
-                final_df.to_csv(
-                    "./others/" + key + ".csv", encoding="utf-8-sig", index=False
-                )
-                # final_df.to_excel(key + ".xlsx", index=False, engine="openpyxl")
+                final_df.to_csv("./others/" + key + ".csv",
+                                encoding="utf-8-sig",
+                                index=False)
             else:
                 print("> No data was fetched from the API.\n")
-
-            if self.config_type == "deal":
-                for dealCustomFieldData in final_df["links.dealCustomFieldData"]:
-                    response = requests.get(
-                        dealCustomFieldData,
-                        headers=self.config[self.config_type]["headers"],
-                    )
-                    response_data = response.json()
-                    normalized_response_data = pd.json_normalize(
-                        response_data["dealCustomFieldData"]
-                    )
-                    df_list_data.append(normalized_response_data)
-                    # if len(self.config[self.config_type]["schema"]) != 0:
-                    #     df = pd.DataFrame(
-                    #         normalized_response_data,
-                    #         columns=self.config[self.config_type]["schema"].keys(),
-                    #     )
-                    # else:
-                if df_list_data:
-                    df_final_data = pd.concat(df_final_data, ignore_index=True)
-                    # print(
-                    #     f"> Final {self.config_type} dataframe created with {len(final_df)} rows!\n Exported dataframe to csv!"
-                    # )
-                    df_final_data.to_csv(
-                        "./others/dealCustomFieldData.csv",
-                        encoding="utf-8-sig",
-                        index=False,
-                    )
-                    # final_df.to_excel(key + ".xlsx", index=False, engine="openpyxl")
-                else:
-                    print("> No data was fetched from the API.\n")
-
+            print(f">  Finished -> {self.config_type}\n")
         except requests.exceptions.RequestException as req_error:
             print(f"Request error for {self.config_type}: {req_error}")
         except ValueError as val_error:

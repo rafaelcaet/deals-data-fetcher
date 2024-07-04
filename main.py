@@ -1,13 +1,23 @@
-from poll import *
+from helpers.poll import *
+import schedule
+import time
+
+
+def run_poll():
+    poll = Poll()
+    poll.start()
 
 
 def main():
 
-    # New Poll instance
-    poll = Poll()
+    print('>>> Initializing Poll <<<')
+    run_poll()
+    schedule.every(1).minute.do(run_poll)
 
-    # Start Poll
-    poll.start()
+    # Loop para manter a execução contínua
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 
 if __name__ == "__main__":
