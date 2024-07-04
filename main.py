@@ -18,7 +18,6 @@ def main():
     clearScreen()
     run_poll()
     schedule.every(1).minute.do(run_poll)
-    print(f"*****  Waiting for next poll ****** ")
     while True:
         schedule.run_pending()
         time.sleep(1)

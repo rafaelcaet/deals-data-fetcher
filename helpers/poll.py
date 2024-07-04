@@ -8,6 +8,7 @@ from dealFetchData.dealOwner import *
 from dealFetchData.dealCustomFieldData import *
 from dealFetchData.dealContact import *
 from datetime import datetime
+from helpers.logger import logger
 
 
 class Poll:
@@ -21,12 +22,7 @@ class Poll:
             print(
                 f"************************************************************\n\t\t>>> Initializing Poll <<<\n\n* Poll started at {date_now.strftime('%d/%m/%Y %H:%M')}\n************************************************************"
             )
-            ################# Read files and logger ##########################
-
-            if not os.path.exists('logs'): os.makedirs('logs')
-            with open('./logs/logger.txt', 'a') as f:
-                f.write(
-                    f"Poll started at {date_now.strftime('%d/%m/%Y %H:%M')}\n")
+            ################# Read files ##########################
 
             with open("config.json", "r") as f:
                 config = json.load(f)
@@ -39,6 +35,10 @@ class Poll:
             final_df = None
 
             start_time = time.time()
+            ##################### Logger #####################################
+
+            logger(date_now.strftime('%d/%m/%Y %H:%M'))
+
             ################## Deals Threads #################################
             print(f">> started a fetch thread to deals")
             for endpoint in config["deals"]:
@@ -56,6 +56,7 @@ class Poll:
             ################## DealCustomFieldData Threads ###################
             print(f">> started a fetch thread to dealCustomFieldData")
             results = []
+            if not os.path.exists('others'): os.makedirs('others')
             df_deals = pd.read_csv("./others/deals.csv")
 
             for deal_custom_field_data_link in df_deals[
@@ -71,6 +72,7 @@ class Poll:
                 thread.join()
 
             final_df = pd.concat(results, ignore_index=True)
+            if not os.path.exists('others'): os.makedirs('others')
             final_df.to_csv("./others/dealCustomFieldData.csv",
                             encoding="utf-8-sig",
                             index=False)
@@ -91,6 +93,7 @@ class Poll:
                 thread.join()
 
             final_df = pd.concat(results, ignore_index=True)
+            if not os.path.exists('others'): os.makedirs('others')
             final_df.to_csv("./others/dealsOwner.csv",
                             encoding="utf-8-sig",
                             index=False)
@@ -111,6 +114,7 @@ class Poll:
                 thread.join()
 
             final_df = pd.concat(results, ignore_index=True)
+            if not os.path.exists('others'): os.makedirs('others')
             final_df.to_csv("./others/dealContact.csv",
                             encoding="utf-8-sig",
                             index=False)
@@ -120,8 +124,12 @@ class Poll:
             print(
                 f"\n\nAll threads have been processed in {total_time:,.2f} seconds.\n\n"
             )
+            print(f"\t ~~ Waiting for next poll ~~\n")
         except RuntimeError as e:
-            with open('./logs/logger.txt', 'a') as f:
-                f.write(
-                    f"Poll stopped at {date_now.strftime('%d/%m/%Y %H:%M')}\n>[ERROR] Runtime error {e}"
-                )
+            print(e)
+            logger(date_now.strftime('%d/%m/%Y %H:%M'), 'Poll was crashed at',
+                   'crashed', e)
+        except KeyboardInterrupt as e:
+            print(e)
+            logger(date_now.strftime('%d/%m/%Y %H:%M'), 'Poll was stopped',
+                   'paused')

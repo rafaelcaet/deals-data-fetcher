@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 from datetime import datetime
 import time
+import os
 
 
 class Deals:
@@ -89,6 +90,7 @@ class Deals:
             # Concat all data frames
             if df_list:
                 final_df = pd.concat(df_list, ignore_index=True)
+                if not os.path.exists('others'): os.makedirs('others')
                 final_df.to_csv("./others/" + key + ".csv",
                                 encoding="utf-8-sig",
                                 index=False)
