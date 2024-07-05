@@ -3,12 +3,16 @@ import time
 import json
 import os
 import threading
+
+from datetime import datetime
+
 from dealFetchData.deals import *
 from dealFetchData.dealOwner import *
 from dealFetchData.dealCustomFieldData import *
 from dealFetchData.dealContact import *
-from datetime import datetime
+
 from helpers.logger import logger
+from helpers.formatterCustomField import *
 
 
 class Poll:
@@ -99,7 +103,7 @@ class Poll:
                             index=False)
             final_df = None
             ################## DealContact Threads ########################
-            print(f">> started a fetch thread to dealOnwer")
+            print(f">> started a fetch thread to dealContact")
             results = []
 
             for deal_contact_link in df_deals['links.contact']:
@@ -119,11 +123,37 @@ class Poll:
                             encoding="utf-8-sig",
                             index=False)
 
+            ################## DealGroup Threads ########################
+            print(f">> started a fetch thread to dealGroup")
+            results = []
+
+            for deal_contact_link in df_deals['links.contact']:
+                thread = threading.Thread(target=fetch_deal_contact,
+                                          args=(deal_contact_link,
+                                                config["dealGroup"], results,
+                                                lock))
+                threads.append(thread)
+                thread.start()
+
+            for thread in threads:
+                thread.join()
+
+            final_df = pd.concat(results, ignore_index=True)
+            if not os.path.exists('others'): os.makedirs('others')
+            final_df.to_csv("./others/dealGroup.csv",
+                            encoding="utf-8-sig",
+                            index=False)
+
             end_time = time.time()
             total_time = end_time - start_time
             print(
                 f"\n\nAll threads have been processed in {total_time:,.2f} seconds.\n\n"
             )
+
+            ################## Formatting customField #####################
+
+            formatterCustomField()
+
             print(f"\t ~~ Waiting for next poll ~~\n")
         except RuntimeError as e:
             print(e)
