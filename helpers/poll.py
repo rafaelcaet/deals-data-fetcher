@@ -10,7 +10,7 @@ from dealFetchData.deals import *
 from dealFetchData.dealOwner import *
 from dealFetchData.dealCustomFieldData import *
 from dealFetchData.dealContact import *
-
+from dealFetchData.dealGroup import *
 from helpers.logger import logger
 from helpers.formatterCustomField import *
 
@@ -26,7 +26,7 @@ class Poll:
             print(
                 f"************************************************************\n\t\t>>> Initializing Poll <<<\n\n* Poll started at {date_now.strftime('%d/%m/%Y %H:%M')}\n************************************************************"
             )
-            ################# Read files ##########################
+            ################# Read files #####################################
 
             with open("config.json", "r") as f:
                 config = json.load(f)
@@ -39,11 +39,13 @@ class Poll:
             final_df = None
 
             start_time = time.time()
+
             ##################### Logger #####################################
 
             logger(date_now.strftime('%d/%m/%Y %H:%M'))
 
             ################## Deals Threads #################################
+
             print(f">> started a fetch thread to deals")
             for endpoint in config["deals"]:
                 deal_instance = Deals(endpoint, config["deals"])
@@ -81,6 +83,7 @@ class Poll:
                             encoding="utf-8-sig",
                             index=False)
             final_df = None
+
             ################## DealOwner Threads ###########################
             print(f">> started a fetch thread to dealOnwer")
             results = []
@@ -102,6 +105,7 @@ class Poll:
                             encoding="utf-8-sig",
                             index=False)
             final_df = None
+
             ################## DealContact Threads ########################
             print(f">> started a fetch thread to dealContact")
             results = []
@@ -122,14 +126,15 @@ class Poll:
             final_df.to_csv("./others/dealContact.csv",
                             encoding="utf-8-sig",
                             index=False)
+            final_df = None
 
             ################## DealGroup Threads ########################
             print(f">> started a fetch thread to dealGroup")
             results = []
 
-            for deal_contact_link in df_deals['links.contact']:
-                thread = threading.Thread(target=fetch_deal_contact,
-                                          args=(deal_contact_link,
+            for deal_group_link in df_deals['links.group']:
+                thread = threading.Thread(target=fetch_deal_group,
+                                          args=(deal_group_link,
                                                 config["dealGroup"], results,
                                                 lock))
                 threads.append(thread)
@@ -143,6 +148,9 @@ class Poll:
             final_df.to_csv("./others/dealGroup.csv",
                             encoding="utf-8-sig",
                             index=False)
+            final_df = None
+
+            ###############################################################
 
             end_time = time.time()
             total_time = end_time - start_time
@@ -150,9 +158,11 @@ class Poll:
                 f"\n\nAll threads have been processed in {total_time:,.2f} seconds.\n\n"
             )
 
-            ################## Formatting customField #####################
+            ######################## Formatting ###########################
 
             formatterCustomField()
+
+            ###############################################################
 
             print(f"\t ~~ Waiting for next poll ~~\n")
         except RuntimeError as e:

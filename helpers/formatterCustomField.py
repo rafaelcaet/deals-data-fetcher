@@ -60,7 +60,3 @@ def formatterCustomField():
         print(f"Error: parser error: {e}")
     except Exception as e:
         print(f"Unexpected Error: {e}")
-
-
-if __name__ == "__main__":
-    formatterCustomField()
