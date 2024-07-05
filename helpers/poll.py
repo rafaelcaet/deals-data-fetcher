@@ -11,6 +11,8 @@ from dealFetchData.dealOwner import *
 from dealFetchData.dealCustomFieldData import *
 from dealFetchData.dealContact import *
 from dealFetchData.dealGroup import *
+from dealFetchData.dealStage import *
+
 from helpers.logger import logger
 from helpers.formatterCustomField import *
 
@@ -146,6 +148,28 @@ class Poll:
             final_df = pd.concat(results, ignore_index=True)
             if not os.path.exists('others'): os.makedirs('others')
             final_df.to_csv("./others/dealGroup.csv",
+                            encoding="utf-8-sig",
+                            index=False)
+            final_df = None
+
+            ################## dealStage Threads ########################
+            print(f">> started a fetch thread to dealStage")
+            results = []
+
+            for deal_stage_link in df_deals['links.stage']:
+                thread = threading.Thread(target=fetch_deal_stage,
+                                          args=(deal_stage_link,
+                                                config["dealStage"], results,
+                                                lock))
+                threads.append(thread)
+                thread.start()
+
+            for thread in threads:
+                thread.join()
+
+            final_df = pd.concat(results, ignore_index=True)
+            if not os.path.exists('others'): os.makedirs('others')
+            final_df.to_csv("./others/dealStage.csv",
                             encoding="utf-8-sig",
                             index=False)
             final_df = None

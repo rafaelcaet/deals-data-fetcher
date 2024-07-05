@@ -50,6 +50,7 @@ def formatterCustomField():
             df_result.to_excel("./others/resultCustomFields.xlsx",
                                index=False,
                                engine="openpyxl")
+
     except KeyError as e:
         print(f"Error: pivoting error: {e}")
     except FileNotFoundError as e:
