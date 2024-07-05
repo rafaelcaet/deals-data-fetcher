@@ -29,6 +29,8 @@ def fetch_deal_group(api_url, config, results, lock):
             columns=config["schema"].keys(),
         )
 
+        df = df.rename(columns={'title': 'groupTitle'})
+
         match = re.search(r'/deals/(\d+)', api_url)
         df['dealId'] = match.group(1)
 

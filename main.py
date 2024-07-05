@@ -4,10 +4,6 @@ import time
 import os
 
 
-def clearScreen():
-    os.system("clear")
-
-
 def run_poll():
     poll = Poll()
     poll.start()
@@ -15,7 +11,7 @@ def run_poll():
 
 def main():
 
-    clearScreen()
+    # os.system("clear")
     run_poll()
     schedule.every(1).minute.do(run_poll)
     while True:

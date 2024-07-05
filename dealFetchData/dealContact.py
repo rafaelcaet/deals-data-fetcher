@@ -20,10 +20,16 @@ def fetch_deal_contact(api_url, config, results, lock):
         response_data = response.json()
 
         normalized_response_data = pd.json_normalize(response_data["contact"])
+
         df = pd.DataFrame(
             normalized_response_data,
             columns=config["schema"].keys(),
         )
+
+        df = df.rename(columns={
+            'firstName': 'contactFirstName',
+            'lastName': 'contactLastName'
+        })
 
         with lock:
             results.append(df)

@@ -32,6 +32,8 @@ def fetch_deal_stage(api_url, config, results, lock):
         match = re.search(r'/deals/(\d+)', api_url)
         df['dealId'] = match.group(1)
 
+        df = df.rename(columns={'title': 'stageTitle'})
+
         with lock:
             results.append(df)
 
@@ -43,5 +45,5 @@ def fetch_deal_stage(api_url, config, results, lock):
         print(f"Unexpected error for dealstage: {e}")
 
 
-if __name__ == "__main__":
-    fetch_deal_stage()
+# if __name__ == "__main__":
+#     fetch_deal_stage()

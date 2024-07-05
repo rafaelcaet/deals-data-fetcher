@@ -26,7 +26,7 @@ class Poll:
         try:
             date_now = datetime.now()
             print(
-                f"************************************************************\n\t\t>>> Initializing Poll <<<\n\n* Poll started at {date_now.strftime('%d/%m/%Y %H:%M')}\n************************************************************"
+                f"************************************************************\n\t\t>>> Initializing Poll <<<\n\n* Poll started at {date_now.strftime('%d/%m/%Y %H:%M:%S')}\n************************************************************"
             )
             ################# Read files #####################################
 
@@ -44,7 +44,7 @@ class Poll:
 
             ##################### Logger #####################################
 
-            logger(date_now.strftime('%d/%m/%Y %H:%M'))
+            logger(date_now.strftime('%d/%m/%Y %H:%M:%S'))
 
             ################## Deals Threads #################################
 
@@ -81,7 +81,7 @@ class Poll:
 
             final_df = pd.concat(results, ignore_index=True)
             if not os.path.exists('others'): os.makedirs('others')
-            final_df.to_csv("./others/dealCustomFieldData.csv",
+            final_df.to_csv("./others/dealsCustomFieldData.csv",
                             encoding="utf-8-sig",
                             index=False)
             final_df = None
@@ -125,7 +125,7 @@ class Poll:
 
             final_df = pd.concat(results, ignore_index=True)
             if not os.path.exists('others'): os.makedirs('others')
-            final_df.to_csv("./others/dealContact.csv",
+            final_df.to_csv("./others/dealsContact.csv",
                             encoding="utf-8-sig",
                             index=False)
             final_df = None
@@ -147,7 +147,7 @@ class Poll:
 
             final_df = pd.concat(results, ignore_index=True)
             if not os.path.exists('others'): os.makedirs('others')
-            final_df.to_csv("./others/dealGroup.csv",
+            final_df.to_csv("./others/dealsGroup.csv",
                             encoding="utf-8-sig",
                             index=False)
             final_df = None
@@ -169,7 +169,7 @@ class Poll:
 
             final_df = pd.concat(results, ignore_index=True)
             if not os.path.exists('others'): os.makedirs('others')
-            final_df.to_csv("./others/dealStage.csv",
+            final_df.to_csv("./others/dealsStage.csv",
                             encoding="utf-8-sig",
                             index=False)
             final_df = None
@@ -184,16 +184,29 @@ class Poll:
 
             ######################## Formatting ###########################
 
+            # creating a resultCustomField.csv
             formatterCustomField()
+
+            # load all files to merge then
+            df_deals_Contact = pd.read_csv("./others/dealsContact.csv")
+            df_deals_Group = pd.read_csv("./others/dealsGroup.csv")
+            df_deals_Owner = pd.read_csv("./others/dealsOwner.csv")
+            df_deals_Stage = pd.read_csv("./others/dealsStage.csv")
+            df_deal_result_custom_field = pd.read_csv(
+                "./others/resultCustomFields.csv")
 
             ###############################################################
 
             print(f"\t ~~ Waiting for next poll ~~\n")
         except RuntimeError as e:
             print(e)
-            logger(date_now.strftime('%d/%m/%Y %H:%M'), 'Poll was crashed at',
-                   'crashed', e)
+            logger(date_now.strftime('%d/%m/%Y %H:%M:%S'),
+                   'Poll was crashed at', 'crashed', e)
         except KeyboardInterrupt as e:
             print(e)
-            logger(date_now.strftime('%d/%m/%Y %H:%M'), 'Poll was stopped',
+            logger(date_now.strftime('%d/%m/%Y %H:%M:%S'), 'Poll was stopped',
                    'paused')
+        except FileNotFoundError as e:
+            print(e)
+            logger(date_now.strftime('%d/%m/%Y %H:%M:%S'),
+                   'Poll was crashed at', 'crashed', e)

@@ -17,7 +17,7 @@ def formatterCustomField():
         ]
         # Open csv's files
         dfCustomFieldMeta = pd.read_csv('./others/dealCustomFieldMeta.csv')
-        dfCustomFieldData = pd.read_csv('./others/dealCustomFieldData.csv')
+        dfCustomFieldData = pd.read_csv('./others/dealsCustomFieldData.csv')
 
         field_map = dfCustomFieldMeta.set_index('id')['fieldLabel'].to_dict()
         filtered_field_map = {

@@ -56,8 +56,6 @@ class Deals:
 
                 # Set key variable
                 match self.config_type:
-                    case "data":
-                        key = "dealCustomFieldData"
                     case "meta":
                         key = "dealCustomFieldMeta"
                     case "deal":

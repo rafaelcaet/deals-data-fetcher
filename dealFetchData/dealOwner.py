@@ -24,7 +24,10 @@ def fetch_deal_owner(api_url, config, results, lock):
             normalized_response_data,
             columns=config["schema"].keys(),
         )
-
+        df = df.rename(columns={
+            'firstName': 'ownerFirstName',
+            'lastName': 'ownerLastName'
+        })
         with lock:
             results.append(df)
 
