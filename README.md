@@ -1,8 +1,13 @@
-### Deals Data Fetcher
+# Deals Data Fetcher
 
 This project contains a script to fetch data of DEALS that have been updated from `31/12/2023` onwards through an API.
 
-### Initial Setup
+## Authors
+
+- [@rafaelcaet](https://github.com/rafaelcaet)
+- [@jonhnatta](https://github.com/jonhnatta)
+
+## Initial Setup
 
 Before running the script, you need to set up a config.json file in the project's root folder. This file must contain the necessary information to connect to the API. Below is a template of config.json that should be filled in with the correct information:
 
@@ -24,7 +29,7 @@ Before running the script, you need to set up a config.json file in the project'
 }
 ```
 
-### Field Descriptions
+## Field Descriptions
 
 *api_url* : API URL to fetch DEALS data.
 
@@ -35,7 +40,7 @@ Before running the script, you need to set up a config.json file in the project'
 
 *schema*: Expected schema for DEALS data. You should complete the schema as needed, including the fields you expect to receive and their data types.
 
-### Running the Script
+## Running the Script
 
 After configuring config.json, you can execute the main script to fetch the data. Follow the steps below:
 
@@ -45,7 +50,7 @@ After configuring config.json, you can execute the main script to fetch the data
 ```bash
 python3 main.py
 ```
-### Requirements
+## Requirements
 
 Python 3+: Make sure you have the correct version of Python installed.
 
@@ -60,6 +65,6 @@ pip install -r pandas
 ```bash
 pip install -r requests
 ```
-### Notes
+## Notes
 API Token Security: The API token is sensitive and should be kept secure. Do not share your config.json with third parties.
 Schema: The schema should reflect the expected data structure from the API. Review and adjust as necessary to ensure data integrity.
