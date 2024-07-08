@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+import re
 
 
 def fetch_deal_owner(api_url, config, results, lock):
@@ -24,6 +25,10 @@ def fetch_deal_owner(api_url, config, results, lock):
             normalized_response_data,
             columns=config["schema"].keys(),
         )
+
+        match = re.search(r'/deals/(\d+)', api_url)
+        df['dealId'] = match.group(1)
+
         df = df.rename(columns={
             'firstName': 'ownerFirstName',
             'lastName': 'ownerLastName'

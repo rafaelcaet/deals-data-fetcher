@@ -11,16 +11,18 @@ def run_poll():
 
 def main():
 
-    # os.system("clear")
-    run_poll()
-    schedule.every(1).minute.do(run_poll)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # Running with 1 minute schedule
 
-    ##
-    # poll = Poll()
-    # poll.start()
+    # run_poll()
+    # schedule.every(1).minute.do(run_poll)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
+
+    # Running without schedule
+
+    poll = Poll()
+    poll.start()
 
 
 if __name__ == "__main__":

@@ -184,6 +184,7 @@ class Poll:
 
             ######################## Formatting ###########################
 
+            print(f"\n\t>>> Saving deals data fetch\n")
             # creating a resultCustomField.csv
             formatterCustomField()
 
@@ -195,6 +196,21 @@ class Poll:
             df_deal_result_custom_field = pd.read_csv(
                 "./others/resultCustomFields.csv")
 
+            # Merging all df's
+            df_result_deals = df_deals_Contact.merge(
+                df_deals_Group,
+                on='dealId').merge(df_deals_Owner, on='dealId').merge(
+                    df_deals_Stage,
+                    on='dealId').merge(df_deal_result_custom_field,
+                                       on='dealId')
+
+            # Saving result deals fetch data
+            df_result_deals.to_csv("./others/final-csv.csv",
+                                   encoding="utf-8-sig",
+                                   index=False)
+            df_result_deals.to_excel("./others/final-Excel.xlsx",
+                                     index=False,
+                                     engine="openpyxl")
             ###############################################################
 
             print(f"\t ~~ Waiting for next poll ~~\n")
