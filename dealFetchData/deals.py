@@ -101,35 +101,3 @@ class Deals:
             print(f"JSON processing error for {self.config_type}: {val_error}")
         except Exception as e:
             print(f"Unexpected error for {self.config_type}: {e}")
-
-        # try:
-        #         # type casting to string
-        #         dfMeta['id'] = dfMeta['id'].astype(str)
-        #         dfData['customFieldId'] = dfData['customFieldId'].astype(str)
-
-        #         # merging dataFrames
-        #         df_merged = dfData.merge(dfMeta, left_on='customFieldId', right_on='id', how='left', suffixes=('_dfData', '_dfMeta'))
-
-        #         print('> df_merged dataframe was created!\n')
-
-        #         # pivoting dataFrames
-        #         df_pivoted = df_merged.pivot(columns='fieldLabel', values='fieldValue')
-        #         df_pivoted = df_pivoted.reset_index()
-        #         df_pivoted.columns.name = None
-
-        #     print("> df_pivoted dataframe was created!\n")
-
-        #     Export all dataFrames to csv
-        #     print("> Exported all dataframes to csv!")
-        #     dfMeta.to_csv(
-        #         "csv_dealsCustomFieldMeta.csv", encoding="utf-8-sig", index=False
-        #     )
-        #     dfData.to_csv(
-        #         "csv_dealsCustomFieldData.csv", encoding="utf-8-sig", index=False
-        #     )
-        #     df_merged.to_csv("csv_merged.csv", encoding="utf-8-sig", index=False)
-        #     df_pivoted.to_csv("csv_pivoted.csv", encoding="utf-8-sig", index=False)
-        #     df_pivoted.to_excel("csv_pivoted.xlsx", index=False, engine="openpyxl")
-        #     print(df_pivoted)
-        # except ValueError or KeyError as error:
-        #     print(error)

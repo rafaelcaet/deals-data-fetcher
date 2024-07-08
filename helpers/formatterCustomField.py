@@ -5,7 +5,7 @@ import pandas as pd
 
 def formatterCustomField():
     """
-        formatting dfCustomFieldMeta and dfCustomFieldData in a df_result with the 
+        formatting df_custom_field_meta and df_custom_field_data in a df_result with the 
         respective dealCustomFieldData and dealCustomFieldMeta
     """
     try:
@@ -16,40 +16,52 @@ def formatterCustomField():
             216
         ]
         # Open csv's files
-        dfCustomFieldMeta = pd.read_csv('./others/dealCustomFieldMeta.csv')
-        dfCustomFieldData = pd.read_csv('./others/dealsCustomFieldData.csv')
+        df_custom_field_meta = pd.read_csv('./others/dealCustomFieldMeta.csv')
+        df_custom_field_data = pd.read_csv('./others/dealsCustomFieldData.csv')
 
-        field_map = dfCustomFieldMeta.set_index('id')['fieldLabel'].to_dict()
+        # Cria um dicionário de mapeamento de ids para fieldLabel
+        field_map = df_custom_field_meta.set_index(
+            'id')['fieldLabel'].to_dict()
+
+        # Filtra os ids que estão presentes em ids_field_label
         filtered_field_map = {
             k: v
             for k, v in field_map.items() if k in ids_field_label
         }
-        dfCustomFieldData['fieldLabel'] = dfCustomFieldData[
+
+        # Adiciona a coluna fieldLabel a df_custom_field_data usando o mapeamento
+        df_custom_field_data['fieldLabel'] = df_custom_field_data[
             'customFieldId'].map(filtered_field_map)
 
-        present_columns = dfCustomFieldMeta['fieldLabel'].unique()
-        columns_to_pivot = list(filtered_field_map.values())
-        columns_to_pivot_filtered = [
-            col for col in columns_to_pivot if col in present_columns
+        # Lista de fieldLabels que devem estar presentes
+        field_labels = list(filtered_field_map.values())
+
+        # Pivotagem inicial do DataFrame
+        df_result = df_custom_field_data.pivot_table(
+            index=['dealId'],
+            columns='fieldLabel',
+            values='fieldValue',
+            aggfunc='first',
+            fill_value='',  # Valor padrão para campos vazios
+            dropna=False).reset_index()
+
+        # Verifica colunas faltantes
+        missing_columns = [
+            label for label in field_labels if label not in df_result.columns
         ]
 
-        if set(columns_to_pivot_filtered) == set(columns_to_pivot):
-            df_result = dfCustomFieldData.pivot_table(
-                index=['dealId'],
-                columns='fieldLabel',
-                values='fieldValue',
-                aggfunc='first',
-                fill_value=None,
-                dropna=False).reset_index()
+        # Adiciona colunas faltantes com valores vazios
+        for col in missing_columns:
+            df_result[col] = ''
 
-            df_result = df_result[['dealId'] +
-                                  sorted(filtered_field_map.values())]
-            df_result.to_csv("./others/resultCustomFields.csv",
-                             encoding="utf-8-sig",
-                             index=False)
-            df_result.to_excel("./others/resultCustomFields.xlsx",
-                               index=False,
-                               engine="openpyxl")
+        # Reordena as colunas para garantir que estão no mesmo formato
+        df_result = df_result[['dealId'] + field_labels]
+        df_result.to_csv("./others/resultCustomFields.csv",
+                         encoding="utf-8-sig",
+                         index=False)
+        df_result.to_excel("./others/resultCustomFields.xlsx",
+                           index=False,
+                           engine="openpyxl")
 
     except KeyError as e:
         print(f"Error: pivoting error: {e}")
@@ -61,3 +73,7 @@ def formatterCustomField():
         print(f"Error: parser error: {e}")
     except Exception as e:
         print(f"Unexpected Error: {e}")
+
+
+# if __name__ == "__main__":
+#     formatterCustomField()
